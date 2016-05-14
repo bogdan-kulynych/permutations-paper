@@ -38,7 +38,7 @@ We use ``p`` to denote the plaintext space modulus, thus the plaintexts are elem
 \mathbb{A}_p \cong \mathbb{Z}[X]_p/F_0(X) \times \mathbb{Z}_p[X]/F_1(X) \times ... \times \mathbb{Z}_p[X]/F_{l-1}(X)
 ```
 
-Each factor corresponds to a so-called plaintext slot. We view a polynomial ``a \in \mathbb{A}_p`` as representing an ``l``-dimensional vector ``(a \mod F_i)_{i=1}^l``, or, equivalently, ``l``-vector of elements in ``\mathbb{F}_{p^d}``. Chinese remainder theorem is used to pack the vector into a single value in ``\mathbb{A}_p``. We call this ciphertext representation _batch_, or CRT representation.
+Each factor corresponds to a so-called plaintext slot. We view a polynomial ``a \in \mathbb{A}_p`` as representing an ``l``-dimensional vector ``(a \mod F_i)_{i=0}^{l-1}``, or, equivalently, ``l``-vector of elements in ``\mathbb{F}_{p^d}``. Chinese remainder theorem is used to pack the vector into a single value in ``\mathbb{A}_p``. We call this ciphertext representation _batch_, or CRT representation. We denote procedure of packing using CRT as ``\mathsf{CRT}: \mathbb{F}_{p^d}^l \rightarrow \mathbb{A}_p``, and similarly, unpacking as ``\mathsf{CRT}^{-1}: \mathbb{A}_p \rightarrow \mathbb{F}_{p^d}^l``.
 
 ### Sampling from ``\mathbb{Z}_q[X]/\Phi_m(X)``
 
@@ -95,7 +95,7 @@ Permutations of plaintext slots
 
 An algorithm that allows to perform arbitrary permutation of the plaintext slots using just the homomorphic ``\mathsf{Select}`` operation and cyclic rotations of plaintext slots is shown in \cite{GHS12a}. We verify that a method of performing cyclic rotations as automorphism of ``\mathbb{K}`` can be easily used in NTRU setting.
 
-Recall that Galois group ``\mathcal{G}\mathsf{al}(\mathbb{K}/\mathbb{Q})`` action is a result of applying transformation ``\kappa_i: f(X) \mapsto f(X^i) \mod \Phi_m(X), q_t`` for ``i \in \mathbb{Z}_m^*``. Importantly, for some values ``i`` and a vector ``\mathbf{a} = (a_0, a_1, ..., a_l) \in \mathbb{F}_{p^d}^l`` with ``f = \mathsf{CRT}(\mathbf{a})`` (``f \in \mathbb{Z}_q / \Phi_m(X)``), the transformation ``f^{(i)} = \kappa_i(f)`` produces a polynomial such that ``\mathsf{CRT}^{-1}(f^{(i)}) = (a_{l-k-1}, ..., a_l, a_0, a_1, ..., a_{k})``. Namely, ``\kappa_i`` rotates the slots when ``i`` is not in ``\{p^k ~|~ k = 0, 1, ..., d-1\}``.
+Recall that Galois group ``\mathcal{G}\mathsf{al}(\mathbb{K}/\mathbb{Q})`` action is a result of applying transformation ``\kappa_i: f(X) \mapsto f(X^i) \mod \Phi_m(X), q_t`` for ``i \in \mathbb{Z}_m^*``. Importantly, for some values ``i`` and a vector ``\mathbf{a} = (a_0, a_1, ..., a_l) \in \mathbb{F}_{p^d}^l`` with ``f = \mathsf{CRT}(\mathbf{a})``, the transformation ``f^{(i)} = \kappa_i(f)`` produces a polynomial such that ``\mathsf{CRT}^{-1}(f^{(i)}) = (a_{l-k-1}, ..., a_l, a_0, a_1, ..., a_{k})``. Namely, ``\kappa_i`` rotates the slots when ``i`` is not in ``\{p^k ~|~ k = 0, 1, ..., d-1\}``.
 
 ### Automorphisms
 We will look at the effect of the Galois group action on decryption.
@@ -137,7 +137,7 @@ After applying, ``\kappa_i`` we have over ``\mathbb{Z}_{q_t}[X]``:
 \frac{p}{q_t} \mathfrak{sk}(X^i) \cdot c(X^i) = m(X^i) + p \cdot u(X^i) + \frac{p}{q_t} \cdot v(X^i) + r(X^i) \cdot \Phi_m(X^i)
 ```
 
-This again reduces to a decryption to ``m(X^i)`` under ``\mathfrak{sk^i}`` over ``\mathbb{Z}_{q_t}[X]/\Phi_m(X)``:
+This again reduces to a decryption of ``m(X^i)`` under ``\mathfrak{sk^i}`` over ``\mathbb{Z}_{q_t}[X]/\Phi_m(X)``:
 ```math
 \frac{p}{q_t} \mathfrak{sk}(X^i) \cdot c(X^i) = m(X^i) + p \cdot u(X^i) + \frac{p}{q_t} \cdot v(X^i)
 ```
