@@ -1,4 +1,4 @@
 ## Prerequisites
 
-1. [Sholdoc](http://scholdoc.scholarlymarkdown.com/) is used to compile Scholarly Markdown to TeX.
+1. Install [Scholdoc](http://scholdoc.scholarlymarkdown.com/)
 2. Lualatex
