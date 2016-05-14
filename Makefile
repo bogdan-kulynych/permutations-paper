@@ -12,8 +12,9 @@ SOURCES   := main.md
 TARGET    := paper
 
 BUILDDIR  := build
-RESDIR    := resources
-SETTINGS  := settings/kma.yml
+RESDIR    := latex-common/resources
+BIBDIR    := latex-common/bibliography
+SETTINGS  := latex-common/scholdoc/kma.yml
 
 all: pdf
 
@@ -42,6 +43,7 @@ pdf: latex links
 
 links: buildenv
 	@ln -sf $(shell pwd)/$(RESDIR) $(BUILDDIR)
+	@ln -sf $(shell pwd)/$(BIBDIR) $(BUILDDIR)
 
 clean:
 	rm -rf $(BUILDDIR)

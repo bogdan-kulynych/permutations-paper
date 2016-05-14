@@ -1,5 +1,5 @@
 ---
-bibliography: resources/bibliography.bib
+bibliography: bibliography/crypto.bib
 title: Plaintext slot permutations in batch ciphertexts for NTRU-based fully homomorphic encryption schemes
 author: Bogdan Kulynych
 email: hello@bogdankulynych.me
