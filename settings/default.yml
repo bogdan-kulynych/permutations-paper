@@ -1,0 +1,34 @@
+---
+fontsize: 11pt
+
+latex-before-packages-includes:
+
+latex-after-packages-includes:
+# Theorems
+- \usepackage{amsthm}
+- \theoremstyle{definition}
+- \newtheorem{definition}{Definition}
+
+- \theoremstyle{remark}
+- \newtheorem*{note}{Note}
+
+# Numeration
+- \usepackage{pdflscape}
+- \makeatletter\renewcommand{\@biblabel}[1]{\quad#1.}\makeatother
+
+# Internationalization
+- \usepackage{fontspec}
+- \usepackage{polyglossia}
+- \setmainlanguage{english}
+- \setotherlanguage{ukrainian}
+- \newfontfamily\cyrillicfont[Script=Cyrillic]{CMU Serif}
+- \newfontfamily\cyrillicfontsf[Script=Cyrillic]{CMU Sans Serif}
+- \newfontfamily\cyrillicfonttt[Script=Cyrillic]{CMU Typewriter Text}
+
+latex-header-includes:
+
+biblio-style: alpha
+natbib-options:
+- numbers
+- sort&compress
+---

@@ -1,0 +1,285 @@
+\documentclass[pdf]{beamer}
+
+%% Config
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage{ukrainian}
+\setotherlanguage{english}
+\newfontfamily\cyrillicfont[Script=Cyrillic]{CMU Serif}
+\newfontfamily\cyrillicfontsf[Script=Cyrillic]{CMU Sans Serif}
+\newfontfamily\cyrillicfonttt[Script=Cyrillic]{CMU Typewriter Text}
+
+\bibliographystyle{alpha}  
+ 
+% Useful packages
+\usepackage{amssymb, amsmath, amsfonts, enumerate, float, indentfirst, graphicx, color}
+\usepackage[final]{listings}
+
+\usepackage{tikz}
+
+% Listings
+\lstdefinestyle{mystyle}{
+  language=python,
+  basicstyle=\ttfamily\small,
+  showstringspaces=false,
+  belowskip=1em,
+  aboveskip=1em
+%  frame=single,
+}
+\lstset{escapechar=@,style=mystyle}
+
+%% Title
+\title{Симетрична схема частково-гомоморфного шифрування над кільцем цілих чисел}
+\date[2015]{17 квітня 2015}
+\author{Богдан Кулинич}
+
+%% Theme
+\usetheme{boxes}
+\usecolortheme{seahorse}
+
+\setbeamercovered{transparent=20}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\begin{frame}{}
+
+\begin{itemize}
+	
+	\item Формалізований опис симетричної схеми гомоморфного шифрування з \cite{YKPB13}
+	\item Коректні обмеження параметрів схеми
+	\item Реалізація схеми на С++
+	
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Асиметричне шифрування}
+
+Cхема асиметричного шифрування \( \mathcal{E} \):
+
+\begin{itemize}
+	
+	\item \( \mathsf{KeyGen}_\mathcal{E}( 1^\lambda ) \rightarrow ( \mathbf{pk}, \mathbf{sk} ) \)
+	\item \( \mathsf{Encrypt}_\mathcal{E}( \mathbf{pk}, m \in \{0, 1\} ) \rightarrow c \in \mathcal{C}. \)
+	\item \( \mathsf{Decrypt}_\mathcal{E}( \mathbf{sk}, c \in \mathcal{C} ) \rightarrow m \in \{ 0, 1 \} \)
+	
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Гомоморфне шифрування}
+
+Cхема асиметричного \textcolor{blue}{гомоморфного} шифрування \( \mathcal{E} \):
+
+\begin{itemize}
+	
+	\item \( \mathsf{KeyGen}_\mathcal{E}( 1^\lambda ) \rightarrow ( \mathbf{pk}, \mathbf{sk} ) \)
+	\item \( \mathsf{Encrypt}_\mathcal{E}( \mathbf{pk}, m \in \{0, 1\} ) \rightarrow c \in \mathcal{C}. \)
+	\item \( \mathsf{Decrypt}_\mathcal{E}( \mathbf{sk}, c \in \mathcal{C} ) \rightarrow m \in \{ 0, 1 \} \)
+	\textcolor{blue}{
+	\item \( \mathsf{Add}_\mathcal{E}( \mathbf{pk} , c_1 \in \mathcal{C}, ~ c_2 \in \mathcal{C} ) \)
+	\item \( \mathsf{Mult}_\mathcal{E}( \mathbf{pk} , c_1 \in \mathcal{C}, ~ c_2 \in \mathcal{C} ) \)}
+	
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Гомоморфне шифрування}
+\textbf{Означення.} Позначимо шифрування біта \( m \) як \( \hat m \):
+\[ \mathsf{Decrypt}_\mathcal{E}( \mathbf{pk}, \hat m ) = m \]
+для відомого контексту \( (\mathbf{pk}, \mathbf{sk}) \) і схеми \( \mathcal{E} \). Нехай також:
+
+\begin{itemize}
+\setlength{\itemindent}{10em}
+\item[(Гомоморфне додавання)] \( \hat m_1 \oplus \hat m_2 = \mathsf{Add}_\mathcal{E}( \mathbf{pk}, \hat m_1, \hat m_2 )  \)
+\item[(Гомоморфне множення)] \( \hat m_1 \otimes \hat m_2 = \mathsf{Mult}_\mathcal{E}( \mathbf{pk}, \hat m_1, \hat m_2 ) \)
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Повне гомоморфне шифрування}
+
+\begin{block}{}
+Гомоморфна схема шифрування \( \mathcal{E} \) \emph{коректна} і \emph{повна}, 
+якщо для будь-яких \( m_1, m_2 \in \{ 0, 1\}\) і будь-яких \( \hat m_1, \hat m_2 \in \mathcal{C}\):
+
+\begin{itemize}
+	\item \( \mathsf{Decrypt}_\mathcal{E}( \mathbf{sk}, \hat m_1 \oplus \hat m_2 ) ) = m_1 + m_2 \mod 2 \)
+	\item \( \mathsf{Decrypt}_\mathcal{E}( \mathbf{sk}, \hat m_1 \otimes \hat m_2 ) ) = m_1 \cdot m_2 \mod 2 \)
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}{Приватне виконання функцій}
+
+\begin{center}
+\begin{tikzpicture}
+	[scale=.2,auto=center,every node/.style={rectangle,fill=blue!20}]
+		
+  	\draw[color=red!50,fill=red!0] (-10,2.5) rectangle (10,-13);
+	\node[rectangle,fill=red!20] (client) at (0,0) {Клієнт};
+	
+  	\draw[color=red!50,fill=red!0] (10,2.5) rectangle (40,-13);
+	\node[rectangle,fill=red!20] (server) at (25,0) {Сервер};
+	
+	\node[rectangle,fill=white,opacity=0.8,text opacity=1] (sent) at (11, -2) { $\hat a_1, ..., \hat a_n; x_0, \mathbf{pk'}$ };
+	\node[rectangle,fill=white,opacity=0.8,text opacity=1] (recv) at (10, -8) { $\hat y$ };
+	
+	\node (encrypt) at (0, -5) { $\mathsf{Encrypt}(x_0, \mathbf{pk'}; a_i)$ };
+	\node (decrypt) at (0, -10) { $\mathsf{Decrypt}(p; \hat y) = y$ };
+	\node (encrypt1) at (25,-5) { $\mathsf{Encrypt}(x_0, \mathbf{pk'}; b_i)$ };
+	\node (compute) at (25,-10) { $f(x_0; \hat a_1, ..., \hat a_n, \hat b_1, ..., \hat b_m) = \hat y$ };
+
+	\draw[->] (encrypt) -- (encrypt1);
+	\draw[->] (encrypt1) -- (compute);
+	\draw[->] (compute) -- (decrypt);
+\end{tikzpicture}
+\end{center}
+
+\end{frame}
+
+\begin{frame}{Повне гомоморфне шифрування}
+
+Cхеми гомоморфного шифрування першого покоління (2009—2010):
+\begin{itemize}
+\item{} Перша схема на базі ідеальних решіток \cite{Gen09}
+\item{} На базі цілих чисел \cite{DGHV10}
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Cхема DGHV над цілими числами}{
+\only<1>{Оригінальні формулювання}
+\only<2->{Симетричний варіант з публічним елементом без шуму \(x_0\) }
+}
+
+\begin{itemize}
+	
+	\item Шифрування (симетричне) біта \(m\) з приватним ключем \( \mathbf{sk} = p\)
+	\only<1>{ \[ c = q \cdot p + m + 2r \] }
+	\only<2->{ \[ c = \left[ q \cdot p + m + 2r \right]_{x_0} \] }
+	\only<1>{\item Шифрування біта \(m\) з публічним ключем \( \mathbf{pk} \)
+	\[ c = \left[ m + 2r + 2\sum_{i \in S} x_i \right]_{x_0} \]}
+	\only<1>{\item Публічний ключ \( \mathbf{pk} \) — набір шифрувань нуля
+	\[x_i = q_i \cdot p + r_i \]}
+	\item \( x_0 = q_0 \cdot p \) – \only<2->{публічний} елемент без шуму
+	\item Розшифрування \(c\)
+	\[ m = [c~\mathsf{mod}~p]_2 \]
+	\only<2->{\item<3> Гомоморфне додавання
+	\[ c_1 \oplus c_2 = \left[ c_1 + c_2 \right]_{x_0} \]}
+	\only<2->{\item<3> Гомоморфне множення
+	\[ c_1 \otimes c_2 = \left[ c_1 \cdot c_2 \right]_{x_0} \]}
+
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[allowframebreaks]{Властивості симетричного варіанту DGHV}
+
+\begin{itemize}
+	\item Схема частково-гомоморфна:
+	\begin{align*}
+	\hat m_1 \oplus \hat m_2 &= [m_1 + m_2 + (q_1 + q_2)p + 2(r_1 + r_2)]_{x_0} \\
+		&= [m_1 + m_2 + q' \cdot p + 2r']_{x_0} \\
+	\hat m_1 \otimes \hat m_2 &= [m_1 \cdot m_2 + (q_1 q_2 p + q_1 m_2 + q_2 m_1 + 2 q_1 r_2 + 2 q_2 r_1)p \\
+	    &+ 2(m_1 r_2 + m_2 r_1 + 2 r_1 r_2)]_{x_0} \\
+	    &= [m_1 \cdot m_2 + q' \cdot p + 2r']_{x_0}
+	\end{align*}
+	Зі збільшенням кількості виконаних операцій, шум \( 2r \) зростає.
+	Коли перевищує \(p - m\), \(c\) розшифровується некоректно.
+	\item Техніка бутстрапінгу використовується, щоб зменшити шум в \(c\) \cite{DGHV10, Gen09}
+	\item Схема підтримує змішані операції:
+	\begin{align*}
+	\hat m \oplus \hat 1 &= [\hat m + 1]_{x_0} \\
+	\hat m \oplus \hat 0 &= [\hat m + 0]_{x_0} = \hat m \\
+	\hat m \otimes \hat 1 &= [\hat m \cdot 1]_{x_0} = \hat m \\
+	\hat m \otimes \hat 0 &= [\hat m \cdot 0]_{x_0} = 0
+	\end{align*}
+	
+	При цьому шум зростає тільки при виконанні додавання одиниці.
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Використання симетричної DGHV}
+
+Було:
+\begin{center}
+\begin{tikzpicture}
+	[scale=.2,auto=center,every node/.style={rectangle,fill=blue!20}]
+		
+  	\draw[color=red!50,fill=red!0] (-10,2.5) rectangle (10,-13);
+	\node[rectangle,fill=red!20] (client) at (0,0) {Клієнт};
+	
+  	\draw[color=red!50,fill=red!0] (10,2.5) rectangle (40,-13);
+	\node[rectangle,fill=red!20] (server) at (25,0) {Сервер};
+	
+	\node[rectangle,fill=white,opacity=0.8,text opacity=1] (sent) at (11, -2) { $\hat a_1, ..., \hat a_n; x_0, \mathbf{pk'}$ };
+	\node[rectangle,fill=white,opacity=0.8,text opacity=1] (recv) at (10, -8) { $\hat y$ };
+	
+	\node (encrypt) at (0, -5) { $\mathsf{Encrypt}(x_0, \mathbf{pk'}; a_i)$ };
+	\node (decrypt) at (0, -10) { $\mathsf{Decrypt}(p; \hat y) = y$ };
+	\node (encrypt1) at (25,-5) { $\mathsf{Encrypt}(x_0, \mathbf{pk'}; b_i)$ };
+	\node (compute) at (25,-10) { $f(x_0; \hat a_1, ..., \hat a_n, \hat b_1, ..., \hat b_m) = \hat y$ };
+
+	\draw[->] (encrypt) -- (encrypt1);
+	\draw[->] (encrypt1) -- (compute);
+	\draw[->] (compute) -- (decrypt);
+\end{tikzpicture}
+\end{center}
+
+
+Стало:
+\begin{center}
+\begin{tikzpicture}
+	[scale=.2,auto=center,every node/.style={rectangle,fill=blue!20}]
+		
+  	\draw[color=red!50,fill=red!0] (-10,2.5) rectangle (10,-13);
+	\node[rectangle,fill=red!20] (client) at (0,0) {Клієнт};
+	
+  	\draw[color=red!50,fill=red!0] (10,2.5) rectangle (40,-13);
+	\node[rectangle,fill=red!20] (server) at (25,0) {Сервер};
+	
+	\node[rectangle,fill=white,opacity=0.8,text opacity=1] (sent) at (10, -2) { $\hat a_1, ..., \hat a_n; x_0$ };
+	\node[rectangle,fill=white,opacity=0.8,text opacity=1] (recv) at (10, -8) { $\hat y$ };
+	
+	\node (encrypt) at (0, -5) { $\mathsf{Encrypt}(x_0, a_i)$ };
+	\node (decrypt) at (0, -10) { $\mathsf{Decrypt}(p, \hat y) = y$ };
+	\node (compute) at (25,-7.5) { $f(x_0; \hat a_1, ..., \hat a_n, b_1, ..., b_m) = \hat y$ };
+
+	\draw[->] (encrypt) |- (25, -5)-- (compute);
+	\draw[->] (compute) |- (25,-10) -- (decrypt);
+\end{tikzpicture}
+\end{center}
+
+\end{frame}	
+	
+\begin{frame}{Висновки}
+
+\begin{itemize}
+	\item Виконання змішаних операцій дозволяє не шифрувати \emph{всі} входи функції, що виконується гомоморфно
+	\item Зникає необхідність передавати публічний ключ, що зменшує розмір передаваних даних
+	\item Потрібно підбирати параметри схеми, щоб \(f\) виконувалась коректно (без перевищень шуму).
+	\item В \cite{YKPB13} параметри схеми підібрані неправильно.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Посилання}
+\bibliography{resources/bibliography.bib}{}
+\bibliographystyle{plain}
+\end{frame}
+
+\end{document}
