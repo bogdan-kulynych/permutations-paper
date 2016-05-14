@@ -95,7 +95,7 @@ Permutations of plaintext slots
 
 An algorithm that allows to perform arbitrary permutation of the plaintext slots using just the homomorphic ``\mathsf{Select}`` operation and cyclic rotations of plaintext slots is shown in \cite{GHS12a}. We verify that a method of performing cyclic rotations as automorphism of ``\mathbb{K}`` can be easily used in NTRU setting.
 
-Recall that Galois group ``\mathcal{G}\mathsf{al}(\mathbb{K}/\mathbb{Q})`` action is a result of applying transformation ``\kappa_i: f(X) \mapsto f(X^i) \mod \Phi_m(X), q_t`` for ``i \in \mathbb{Z}_m^*``. Importantly, for some values ``i`` and plaintext vector ``\mathbf{a} = (a_0, a_1, ..., a_{l-1}) \in \mathbb{F}_{p^d}^l`` with corresponding ``f = \mathsf{CRT}(\mathbf{a})``, the transformation ``f^{(i)} = \kappa_i(f)`` produces polynomial whose coefficients are rotated values of ``\mathbf{a}``: ``\mathsf{CRT}^{-1}(f^{(i)}) = (a_{k}, ..., a_{l-1}, a_0, a_1, ..., a_{k-1})`` for some ``k \in \{1, 2, ..., l - 1\}``. Namely, ``\kappa_i`` rotates the plaintext slots when ``i`` is not in ``\{p^j ~|~ j = 0, 1, ..., d-1\}``.
+Recall that Galois group ``\mathcal{G}\mathsf{al}(\mathbb{K}/\mathbb{Q})`` action is a result of applying transformation ``\kappa_i: f(X) \mapsto f(X^i) \mod \Phi_m(X), q_t`` for ``i \in \mathbb{Z}_m^*``. Importantly, for some values ``i`` and plaintext vector ``\mathbf{a} = (a_0, a_1, ..., a_{l-1}) \in \mathbb{F}_{p^d}^l`` with corresponding ``f = \mathsf{CRT}(\mathbf{a})`` and its encryption ``c`` under ``\mathfrak{sk}``, the transformation ``c^{(i)} = \kappa_i(c)`` produces a ciphertext, that decrypts under ``\kappa_i(\mathfrak{sk})`` to a polynomial whose plaintext slots are rotated values of ``\mathbf{a}``: ``\mathsf{CRT}^{-1}(f^{(i)}) = (a_{k}, ..., a_{l-1}, a_0, a_1, ..., a_{k-1})`` for some ``k \in \{1, 2, ..., l - 1\}``. Namely, ``\kappa_i`` rotates the plaintext slots when ``i`` is not in ``\{p^j ~|~ j = 0, 1, ..., d-1\}``.
 
 ### Automorphisms
 We will look at the effect of the Galois group action on decryption.
@@ -137,7 +137,7 @@ After applying, ``\kappa_i`` we have over ``\mathbb{Z}_{q_t}[X]``:
 \frac{p}{q_t} \mathfrak{sk}(X^i) \cdot c(X^i) = m(X^i) + p \cdot u(X^i) + \frac{p}{q_t} \cdot v(X^i) + r(X^i) \cdot \Phi_m(X^i)
 ```
 
-This again reduces to a decryption of ``m(X^i)`` under ``\mathfrak{sk^i}`` over ``\mathbb{Z}_{q_t}[X]/\Phi_m(X)``:
+This again decrypts to ``m(X^i)`` under ``\mathfrak{sk}(X^i)`` over ``\mathbb{Z}_{q_t}[X]/\Phi_m(X)``:
 ```math
 \frac{p}{q_t} \mathfrak{sk}(X^i) \cdot c(X^i) = m(X^i) + p \cdot u(X^i) + \frac{p}{q_t} \cdot v(X^i)
 ```
